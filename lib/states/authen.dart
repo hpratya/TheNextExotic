@@ -20,15 +20,51 @@ class _AuthenState extends State<Authen> {
     double size = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          children: [
-            BuildImage(size),
-            BuildAppName(),
-            BuildUser(size),
-            BuildPassword(size),
-          ],
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          behavior: HitTestBehavior.opaque,
+          child: ListView(
+            children: [
+              BuildImage(size),
+              BuildAppName(),
+              BuildUser(size),
+              BuildPassword(size),
+              BuildLogin(size),
+              BuildCreateAccount(),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Row BuildCreateAccount() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+            margin: EdgeInsets.only(top: 50),
+            child: TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/createAccount'),
+              child: Text('Create new account'),
+              style: TextButton.styleFrom(primary: MyConstant.darkColor),
+            )),
+      ],
+    );
+  }
+
+  Row BuildLogin(double size) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 12),
+            width: size * 0.6,
+            child: ElevatedButton(
+                style: MyConstant().myButtonStyle(),
+                onPressed: () {},
+                child: Text('Login'))),
+      ],
     );
   }
 

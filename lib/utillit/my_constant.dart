@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyConstant {
   //General
-  static String appName = 'The NextExotic';
+  static String appName = 'The Next Exotic';
 
   //Route
   static String routAuthen = '/authen';
@@ -34,4 +34,11 @@ class MyConstant {
         color: primaryColor,
         fontWeight: FontWeight.normal,
       );
+
+  //ButtonStyle
+  ButtonStyle myButtonStyle() => ElevatedButton.styleFrom(
+      primary: MyConstant.darkColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ));
 }
