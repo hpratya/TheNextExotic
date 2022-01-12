@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -25,6 +26,11 @@ class _CreateAccountState extends State<CreateAccount> {
   bool statusRedEye = true;
   double? lat, lng;
   final formkey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
 
   @override
   void initState() {
@@ -93,6 +99,7 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            controller: nameController,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอกข้อมูล ชื่อ ให้ครบถ้วน';
@@ -129,6 +136,7 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            controller: emailController,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอกข้อมูล อีเมลล์ ให้ครบถ้วน';
@@ -165,6 +173,7 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            controller: passController,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอกข้อมูล รหัสผ่าน ให้ครบถ้วน';
@@ -213,6 +222,7 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            controller: addressController,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอกข้อมูล ที่อยู่ ให้ครบถ้วน';
@@ -249,6 +259,7 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            controller: contactController,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'กรุณากรอกข้อมูล ช่องทางการติดต่อ ให้ครบถ้วน';
@@ -347,11 +358,26 @@ class _CreateAccountState extends State<CreateAccount> {
                 'กรุณาแตะที่ประเภทบัญชีที่ต้องการ');
           } else {
             print('Loading Database');
+            uploadPicandInsertData();
           }
         }
       },
       icon: Icon(Icons.cloud_circle_outlined),
     );
+  }
+
+  Future<Null> uploadPicandInsertData() async {
+    String name = nameController.text;
+    String email = emailController.text;
+    String pass = passController.text;
+    String address = addressController.text;
+    String contact = contactController.text;
+
+    print(
+        'name = $name, email = $email, pass = $pass, address = $address, contact = $contact');
+    String path =
+        '${MyConstant.domain}/thenextexotic/getUserWhereUser.php?isAdd=true&name=$name';
+    await Dio().get(path).then((value) => print('## value => $value'));
   }
 
   // ignore: prefer_collection_literals

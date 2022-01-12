@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class MyConstant {
   //General
   static String appName = 'The Next Exotic';
+  static String domain =
+      'https://ac62-2001-fb1-14b-891c-696f-8f31-327c-9e1b.ngrok.io';
 
   //Route
   static String routAuthen = '/authen';
