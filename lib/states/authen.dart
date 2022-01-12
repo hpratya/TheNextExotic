@@ -25,12 +25,12 @@ class _AuthenState extends State<Authen> {
           behavior: HitTestBehavior.opaque,
           child: ListView(
             children: [
-              BuildImage(size),
-              BuildAppName(),
-              BuildUser(size),
-              BuildPassword(size),
-              BuildLogin(size),
-              BuildCreateAccount(),
+              buildImage(size),
+              buildAppName(),
+              buildUser(size),
+              buildPassword(size),
+              buildLogin(size),
+              buildCreateAccount(),
             ],
           ),
         ),
@@ -38,7 +38,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Row BuildCreateAccount() {
+  Row buildCreateAccount() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -53,7 +53,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Row BuildLogin(double size) {
+  Row buildLogin(double size) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -68,7 +68,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Row BuildPassword(double size) {
+  Row buildPassword(double size) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -110,7 +110,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Row BuildUser(double size) {
+  Row buildUser(double size) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -140,7 +140,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Row BuildAppName() {
+  Row buildAppName() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -149,7 +149,7 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-  Row BuildImage(double size) {
+  Row buildImage(double size) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

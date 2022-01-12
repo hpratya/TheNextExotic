@@ -12,6 +12,7 @@ class MyConstant {
 
   //Image
   static String imageLogo = 'images/logoRBG.png';
+  static String avatarDefault = 'images/accountIcon.png';
 
   //Colors
   static Color primaryColor = Color(0xfffbc02d);
@@ -33,6 +34,12 @@ class MyConstant {
         fontSize: 14,
         color: primaryColor,
         fontWeight: FontWeight.normal,
+      );
+  // ignore: prefer_const_constructors
+  TextStyle h4Style() => TextStyle(
+        fontSize: 12,
+        color: darkColor,
+        fontWeight: FontWeight.w700,
       );
 
   //ButtonStyle
