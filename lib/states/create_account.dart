@@ -24,6 +24,7 @@ class _CreateAccountState extends State<CreateAccount> {
   String? userType;
   bool statusRedEye = true;
   double? lat, lng;
+  final formkey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -92,6 +93,11 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูล ชื่อ ให้ครบถ้วน';
+              } else {}
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
@@ -123,6 +129,11 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูล อีเมลล์ ให้ครบถ้วน';
+              } else {}
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
@@ -154,6 +165,11 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูล รหัสผ่าน ให้ครบถ้วน';
+              } else {}
+            },
             obscureText: statusRedEye,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
@@ -197,6 +213,11 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูล ที่อยู่ ให้ครบถ้วน';
+              } else {}
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
@@ -228,6 +249,11 @@ class _CreateAccountState extends State<CreateAccount> {
           width: size * 0.6,
           height: size * 0.1,
           child: TextFormField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'กรุณากรอกข้อมูล ช่องทางการติดต่อ ให้ครบถ้วน';
+              } else {}
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
@@ -256,6 +282,9 @@ class _CreateAccountState extends State<CreateAccount> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          buildCreateNewAccount(),
+        ],
         backgroundColor: MyConstant.darkColor,
         centerTitle: true,
         title: Text("Create new account"),
@@ -263,44 +292,65 @@ class _CreateAccountState extends State<CreateAccount> {
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         behavior: HitTestBehavior.opaque,
-        child: ListView(
-          padding: EdgeInsets.all(12),
-          children: [
-            buildTitle('ประเภทของบัญชี'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Form(
+          key: formkey,
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                buildBuyer(size),
-                buildSeller(size),
-              ],
-            ),
-            buildTitle('ข้อมูลทั่วไป'),
-            buildName(size),
-            buildEmail(size),
-            buildPassword(size),
-            buildAddress(size),
-            buildContract(size),
-            buildTitle('รูปภาพ'),
-            buildAvatar(size),
-            buildTitle('แสดงพิกัดที่เครื่องอยู่'),
-            buildMap(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8),
-                  child: ElevatedButton(
-                      style: MyConstant().myButtonStyle(),
-                      onPressed: () {
-                        setState(() {});
-                      },
-                      child: Text('confirm')),
+                buildTitle('ประเภทของบัญชี'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildBuyer(size),
+                    buildSeller(size),
+                  ],
+                ),
+                buildTitle('ข้อมูลทั่วไป'),
+                buildName(size),
+                buildEmail(size),
+                buildPassword(size),
+                buildAddress(size),
+                buildContract(size),
+                buildTitle('รูปภาพ'),
+                buildAvatar(size),
+                buildTitle('แสดงพิกัดที่เครื่องอยู่'),
+                buildMap(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 8),
+                      child: ElevatedButton(
+                          style: MyConstant().myButtonStyle(),
+                          onPressed: () {
+                            setState(() {});
+                          },
+                          child: Text('confirm')),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  IconButton buildCreateNewAccount() {
+    return IconButton(
+      onPressed: () {
+        if (formkey.currentState!.validate()) {
+          if (userType == null) {
+            print('Non type user');
+            MyDialog().nomalDialog(context, 'ยังไม่ได้เลือกประเภทบัญชี',
+                'กรุณาแตะที่ประเภทบัญชีที่ต้องการ');
+          } else {
+            print('Loading Database');
+          }
+        }
+      },
+      icon: Icon(Icons.cloud_circle_outlined),
     );
   }
 
@@ -323,7 +373,8 @@ class _CreateAccountState extends State<CreateAccount> {
             : GoogleMap(
                 initialCameraPosition:
                     CameraPosition(target: LatLng(lat!, lng!), zoom: 16),
-                onMapCreated: (controller) {},markers: setMarker(),
+                onMapCreated: (controller) {},
+                markers: setMarker(),
               ),
       );
 
