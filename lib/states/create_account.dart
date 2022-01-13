@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,8 @@ class CreateAccount extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccount> {
   File? file;
-  String? userType;
+  String? usertype;
+  String avatar = '';
   bool statusRedEye = true;
   double? lat, lng;
   final formkey = GlobalKey<FormState>();
@@ -352,7 +354,7 @@ class _CreateAccountState extends State<CreateAccount> {
     return IconButton(
       onPressed: () {
         if (formkey.currentState!.validate()) {
-          if (userType == null) {
+          if (usertype == null) {
             print('Non type user');
             MyDialog().nomalDialog(context, 'ยังไม่ได้เลือกประเภทบัญชี',
                 'กรุณาแตะที่ประเภทบัญชีที่ต้องการ');
@@ -377,7 +379,63 @@ class _CreateAccountState extends State<CreateAccount> {
         'name = $name, email = $email, pass = $pass, address = $address, contact = $contact');
     String path =
         '${MyConstant.domain}/thenextexotic/getUserWhereUser.php?isAdd=true&name=$name';
-    await Dio().get(path).then((value) => print('## value => $value'));
+    await Dio().get(path).then((value) async {
+      print('## value => $value');
+      if (value.toString() == 'null') {
+        print('### name ok');
+        if (file == null) {
+          //No Avatar
+          processInsertMySQL(
+              name: name,
+              email: email,
+              password: pass,
+              address: address,
+              contact: contact);
+        } else {
+          // Hava an Avatar
+          print('### Please Upload Avatar ###');
+          String api_savedata =
+              '${MyConstant.domain}/thenextexotic/saveFile.php';
+          int i = Random().nextInt(100000);
+          String avatarname = 'avatar$i.jpg';
+          Map<String, dynamic> map = Map();
+          map['file'] =
+              await MultipartFile.fromFile(file!.path, filename: avatarname);
+          FormData data = FormData.fromMap(map);
+          await Dio().post(api_savedata, data: data).then((value) {
+            avatar = '/thenextexotic/avatar/$avatarname';
+            processInsertMySQL(
+                name: name,
+                email: email,
+                password: pass,
+                address: address,
+                contact: contact);
+          });
+        }
+      } else {
+        MyDialog().nomalDialog(context, 'name false', 'please change name');
+      }
+    });
+  }
+
+  Future<Null> processInsertMySQL({
+    String? name,
+    String? email,
+    String? password,
+    String? address,
+    String? contact,
+  }) async {
+    print('Process image to database. $avatar');
+    String apiInsertUser =
+        '${MyConstant.domain}/thenextexotic/insertData.php?isAdd=true&userType=$usertype&name=$name&email=$email&password=$password&address=$address&contact=$contact&avatar=$avatar&lat=$lat&lng=$lng';
+    await Dio().get(apiInsertUser).then((value) {
+      if (value.toString() == 'true') {
+        Navigator.pop(context);
+      } else {
+        MyDialog().nomalDialog(
+            context, 'Create new user failed.', 'Plaese fill again');
+      }
+    });
   }
 
   // ignore: prefer_collection_literals
@@ -450,10 +508,10 @@ class _CreateAccountState extends State<CreateAccount> {
           height: size * 0.1,
           child: RadioListTile(
             value: 'buyer',
-            groupValue: userType,
+            groupValue: usertype,
             onChanged: (value) {
               setState(() {
-                userType = value as String?;
+                usertype = value as String?;
               });
             },
             title: ShowTitle(
@@ -475,10 +533,10 @@ class _CreateAccountState extends State<CreateAccount> {
           height: size * 0.1,
           child: RadioListTile(
             value: 'seller',
-            groupValue: userType,
+            groupValue: usertype,
             onChanged: (value) {
               setState(() {
-                userType = value as String?;
+                usertype = value as String?;
               });
             },
             title: ShowTitle(
