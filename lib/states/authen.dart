@@ -1,7 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:thenextexoticeflutter/models/user_model.dart';
 import 'package:thenextexoticeflutter/utillit/my_constant.dart';
+import 'package:thenextexoticeflutter/utillit/my_dialog.dart';
 import 'package:thenextexoticeflutter/widget/show_image.dart';
 import 'package:thenextexoticeflutter/widget/show_title.dart';
 
@@ -14,6 +19,9 @@ class Authen extends StatefulWidget {
 
 class _AuthenState extends State<Authen> {
   bool statusRedEye = true;
+  final formKey = GlobalKey<FormState>();
+  TextEditingController userEmailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +31,18 @@ class _AuthenState extends State<Authen> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
-          child: ListView(
-            children: [
-              buildImage(size),
-              buildAppName(),
-              buildUser(size),
-              buildPassword(size),
-              buildLogin(size),
-              buildCreateAccount(),
-            ],
+          child: Form(
+            key: formKey,
+            child: ListView(
+              children: [
+                buildImage(size),
+                buildAppName(),
+                buildUser(size),
+                buildPassword(size),
+                buildLogin(size),
+                buildCreateAccount(),
+              ],
+            ),
           ),
         ),
       ),
@@ -62,10 +73,53 @@ class _AuthenState extends State<Authen> {
             width: size * 0.6,
             child: ElevatedButton(
                 style: MyConstant().myButtonStyle(),
-                onPressed: () {},
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    String email = userEmailController.text;
+                    String password = passwordController.text;
+                    print('User Email => $email, Password => $password');
+                    checkAuthen(email: email, password: password);
+                  }
+                },
                 child: Text('Login'))),
       ],
     );
+  }
+
+  Future<Null> checkAuthen({String? email, String? password}) async {
+    String apiCheckAuthen =
+        '${MyConstant.domain}/thenextexotic/getUserWhereUser.php?isAdd=true&email=$email';
+    await Dio().get(apiCheckAuthen).then((value) {
+      print('value from api = ==>$value');
+      if (value.toString() == 'null') {
+        MyDialog()
+            .nomalDialog(context, 'Invalid Email', 'Please use correct Email');
+      } else {
+        for (var item in json.decode(value.data)) {
+          Usermodel usermodel = Usermodel.fromMap(item);
+          if (password == usermodel.password) {
+            //Success
+            String type = usermodel.userType;
+            print('Authen success your user type ==> $type');
+            switch (type) {
+              case 'seller':
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MyConstant.routSeller, (route) => false);
+                break;
+              case 'buyer':
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MyConstant.routBuyer, (route) => false);
+                break;
+              default:
+            }
+          } else {
+            //fail
+            MyDialog().nomalDialog(
+                context, 'Incorrect password', 'Please check your password');
+          }
+        }
+      }
+    });
   }
 
   Row buildPassword(double size) {
@@ -76,6 +130,14 @@ class _AuthenState extends State<Authen> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.8,
           child: TextFormField(
+            controller: passwordController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Please fill password';
+              } else {
+                return null;
+              }
+            },
             obscureText: statusRedEye,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
@@ -118,6 +180,14 @@ class _AuthenState extends State<Authen> {
           margin: EdgeInsets.only(top: 16),
           width: size * 0.8,
           child: TextFormField(
+            controller: userEmailController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Please fill email address';
+              } else {
+                return null;
+              }
+            },
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: size * 0.1),
